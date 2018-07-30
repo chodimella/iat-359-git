@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Wait A Minute</string>
+    <string name="title_activity_notes_view">NotesView</string>
+    <string name="title_activity_notes_list">Notes</string>
+    <string name="title_activity_note_select">Note Select</string>
+    <string name="title_activity_to_do_main">To Do List</string>
+    <string name="create_sample_data">Create sample data</string>
+    <string name="delete_all_notes">Delete All Notes</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="all_deleted">All Notes Deleted</string>
+    <string name="new_note">New Note</string>
+    <string name="note_updated">Note updated</string>
+    <string name="action_delete">Delete</string>
+    <string name="note_deleted">Note Deleted</string>
+    <string name="enter_note_here">Enter Note Here</string>
+</resources>
