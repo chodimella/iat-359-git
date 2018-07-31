@@ -53,7 +53,9 @@ public class NotesProvider extends ContentProvider {
     //Does nothing here
     @Nullable
     @Override
-    public String getType(@NonNull Uri uri) {return null;}
+    public String getType(@NonNull Uri uri) {
+        return null;
+    }
 
     //Inserts new note in to the database
     @Override

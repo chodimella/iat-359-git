@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+
 public class NoteEditor extends AppCompatActivity {
 
     private String action;
@@ -37,18 +38,19 @@ public class NoteEditor extends AppCompatActivity {
             float z = event.values[2];
 
             mAccelLast = mAccelCurrent;
-            mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
+            mAccelCurrent = (float) Math.sqrt((double) (x * x + y * y + z * z));
             float delta = mAccelCurrent - mAccelLast;
             mAccel = mAccel * 0.9f + delta; // perform low-cut filter
 
-            if(mAccel > 15) {
+            if (mAccel > 15) {
                 deleteNote();
                 Toast.makeText(getApplicationContext(), R.string.note_deleted, Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
     };
 
     @Override
@@ -62,7 +64,7 @@ public class NoteEditor extends AppCompatActivity {
         Uri uri = intent.getParcelableExtra(NotesProvider.CONTENT_ITEM_TYPE);
 
         //Checks to see if a new note is being opened or an existing note. If existing, queries the database and retrieves the correct note
-        if(uri == null) {
+        if (uri == null) {
             action = Intent.ACTION_INSERT;
             setTitle(getString(R.string.new_note));
         } else {
@@ -98,7 +100,7 @@ public class NoteEditor extends AppCompatActivity {
     //Adds delete icon to the toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(action.equals(Intent.ACTION_EDIT)) {
+        if (action.equals(Intent.ACTION_EDIT) || action.equals(Intent.ACTION_INSERT)) {
             getMenuInflater().inflate(R.menu.note_editor_menu, menu);
         }
         return true;
@@ -109,7 +111,7 @@ public class NoteEditor extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch(id) {
+        switch (id) {
             case android.R.id.home:
                 finishEditing();
                 break;
@@ -119,7 +121,7 @@ public class NoteEditor extends AppCompatActivity {
                 break;
 
             case R.id.action_add_picture:
-                //function to add picture;
+                //Add camera feature here
                 break;
         }
 
@@ -144,7 +146,7 @@ public class NoteEditor extends AppCompatActivity {
         switch (action) {
             case Intent.ACTION_INSERT:
                 //Nothing happens if user does nothing with new note
-                if(newText.length() == 0) {
+                if (newText.length() == 0) {
                     setResult(RESULT_CANCELED);
                 } else {
                     insertNote(newText); //New note is pushed into database
@@ -153,9 +155,9 @@ public class NoteEditor extends AppCompatActivity {
 
             case Intent.ACTION_EDIT:
                 //If existing note now has no text, note is deleted
-                if(newText.length() == 0) {
+                if (newText.length() == 0) {
                     deleteNote();
-                } else if(oldText.equals(newText)) {
+                } else if (oldText.equals(newText)) {
                     setResult(RESULT_CANCELED); //If existing note is completely unchanged, nothing happens
                 } else {
                     updateNote(newText); //Note is updated and pushed into the database if the text has been changed

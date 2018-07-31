@@ -43,9 +43,12 @@ public class Home extends AppCompatActivity {
 
         //Button implemented with listener to open settings activity (to be implemented for final version)
         settingsButton = (Button) findViewById(R.id.settingsButton);
-        settingsButton.setOnClickListener(new View.OnClickListener(){
+        settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {}
+            public void onClick(View view) {
+                Intent settings = new Intent(Home.this, Settings.class);
+                Home.this.startActivity(settings);
+            }
         });
 
     }

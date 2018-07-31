@@ -1,27 +1,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <Button
         android:id="@+id/noteButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="GO TO NOTES" />
+        android:text="NOTES" />
 
     <Button
         android:id="@+id/todoButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="GO TO TODO LIST" />
+        android:text="TODO LIST" />
 
     <Button
+        android:id="@+id/settingsButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/settingsButton"
-        android:layout_weight="1"
-        android:text="SETTINGS"/>
+        android:text="SETTINGS" />
 
 </LinearLayout>

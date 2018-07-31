@@ -17,13 +17,12 @@
     <at.markushi.ui.CircleButton
         android:layout_width="64dp"
         android:layout_height="64dp"
-        app:cb_color="@color/colorPrimaryDark"
-        app:cb_pressedRingWidth="8dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:onClick="openEditorForNewNote"
         android:src="@drawable/ic_action_add"
-        />
+        app:cb_color="@color/colorPrimaryDark"
+        app:cb_pressedRingWidth="8dp" />
 
 </RelativeLayout>

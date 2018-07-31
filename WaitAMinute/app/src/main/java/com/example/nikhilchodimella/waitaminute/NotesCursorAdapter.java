@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-public class NotesCursorAdapter extends CursorAdapter{
+public class NotesCursorAdapter extends CursorAdapter {
 
     //Custom cursor adapter to ensure that text is properly truncated when displayed as a list
 
@@ -27,7 +27,7 @@ public class NotesCursorAdapter extends CursorAdapter{
         String noteText = cursor.getString(cursor.getColumnIndex(NotesDBHelper.NOTE_TEXT));
 
         int pos = noteText.indexOf(10);
-        if(pos != -1) {
+        if (pos != -1) {
             noteText = noteText.substring(0, pos) + "...";
         }
 
