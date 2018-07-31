@@ -7,9 +7,14 @@
     <item
         android:id="@+id/action_delete"
         android:title="@string/action_delete"
-        android:icon="@drawable/ic_action_delete"
         android:orderInCategory="100"
-        app:showAsAction="always"
+        app:showAsAction="never"
         />
+
+    <item
+        android:id="@+id/action_add_picture"
+        android:title="Add picture"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
 
 </menu>

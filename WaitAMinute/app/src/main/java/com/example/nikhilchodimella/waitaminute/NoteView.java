@@ -90,7 +90,6 @@ public class NoteView extends AppCompatActivity implements LoaderManager.LoaderC
                     @Override
                     public void onClick(DialogInterface dialog, int button) {
                         if (button == DialogInterface.BUTTON_POSITIVE) {
-                            //Insert Data management code here
                             getContentResolver().delete(NotesProvider.CONTENT_URI, null, null);
                             restartLoader();
 
@@ -113,6 +112,7 @@ public class NoteView extends AppCompatActivity implements LoaderManager.LoaderC
         insertNote("Simple note");
         insertNote("Multi-line\nnote");
         insertNote("Very long note with a lot of text that exceeds the width of the screen");
+        insertNote("Shake phone while editing note to delete text");
         restartLoader();
     }
 
