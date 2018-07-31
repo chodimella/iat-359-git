@@ -2,6 +2,7 @@ package com.example.nikhilchodimella.waitaminute;
 
 import android.provider.BaseColumns;
 
+//Public class to hold Database constants
 public class ToDoContract {
     public static final String DB_NAME = "ToDo.db";
     public static final int DB_VERSION = 1;

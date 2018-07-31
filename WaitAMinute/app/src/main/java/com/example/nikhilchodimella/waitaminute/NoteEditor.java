@@ -4,16 +4,20 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 
@@ -30,7 +34,12 @@ public class NoteEditor extends AppCompatActivity {
     private float mAccelCurrent;
     private float mAccelLast;
 
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private ImageView imageView;
+
+    //Initialisation of Sensor Listener
     private final SensorEventListener mSensorListener = new SensorEventListener() {
+        //Method that detects whether device was shaken or not
         @Override
         public void onSensorChanged(SensorEvent event) {
             float x = event.values[0];
@@ -78,11 +87,14 @@ public class NoteEditor extends AppCompatActivity {
             editor.requestFocus();
         }
 
+        //Registration of movement constants and Sensors
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
         mAccel = 0.00f;
         mAccelCurrent = SensorManager.GRAVITY_EARTH;
         mAccelLast = SensorManager.GRAVITY_EARTH;
+
+        imageView = (ImageView) findViewById(R.id.imageview);
     }
 
     @Override
@@ -91,6 +103,7 @@ public class NoteEditor extends AppCompatActivity {
         mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
     }
 
+    //Unregistering sensor
     @Override
     protected void onPause() {
         mSensorManager.unregisterListener(mSensorListener);
@@ -100,7 +113,7 @@ public class NoteEditor extends AppCompatActivity {
     //Adds delete icon to the toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (action.equals(Intent.ACTION_EDIT) || action.equals(Intent.ACTION_INSERT)) {
+        if (action.equals(Intent.ACTION_EDIT)) {
             getMenuInflater().inflate(R.menu.note_editor_menu, menu);
         }
         return true;
@@ -118,10 +131,6 @@ public class NoteEditor extends AppCompatActivity {
 
             case R.id.action_delete:
                 deleteNote();
-                break;
-
-            case R.id.action_add_picture:
-                //Add camera feature here
                 break;
         }
 
@@ -184,8 +193,27 @@ public class NoteEditor extends AppCompatActivity {
         setResult(RESULT_OK);
     }
 
+    //Saves note when user goes back
     @Override
     public void onBackPressed() {
         finishEditing();
+    }
+
+    //Method that hands intent for taking pictures
+    public void dispatchTakePictureIntent(View view) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    //Method to handle picture event after picture is taken
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            imageView.setImageBitmap(imageBitmap);
+        }
     }
 }

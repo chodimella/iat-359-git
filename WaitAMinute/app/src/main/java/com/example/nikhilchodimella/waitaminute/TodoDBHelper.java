@@ -1,14 +1,10 @@
 package com.example.nikhilchodimella.waitaminute;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
 
-import java.util.ArrayList;
-
+//SQLite starter for To Do List database
 public class TodoDBHelper extends SQLiteOpenHelper {
 
     public TodoDBHelper(Context context) {
