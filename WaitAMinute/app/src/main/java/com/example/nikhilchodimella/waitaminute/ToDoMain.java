@@ -1,6 +1,9 @@
 package com.example.nikhilchodimella.waitaminute;
 
+import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -13,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -22,9 +26,10 @@ import static android.os.Build.VERSION_CODES.M;
 
 public class ToDoMain extends AppCompatActivity {
 
-    TodoDBHelper dbHelper;
-    ArrayAdapter<String> adapter;
-    ListView lstItems;
+    private static final String TAG = "ToDoList";
+    private TodoDBHelper dbHelper;
+    private ListView listItems;
+    private ArrayAdapter<String> mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,73 +37,9 @@ public class ToDoMain extends AppCompatActivity {
         setContentView(R.layout.activity_to_do_main);
 
         dbHelper = new TodoDBHelper(this);
-        lstItems = (ListView) findViewById(R.id.todoItems);
+        listItems = (ListView) findViewById(R.id.todoItems);
 
-        showItemList();
-    }
-
-    //Shows list of all items
-    private void showItemList() {
-        ArrayList<String> itemList = dbHelper.getTodoList();
-        if (adapter == null) {
-            adapter = new ArrayAdapter<String>(this, R.layout.todo_row, R.id.itemName, itemList);
-            lstItems.setAdapter(adapter);
-        }
-        else {
-            adapter.clear();
-            adapter.addAll(itemList);
-            adapter.notifyDataSetChanged();
-        }
-    }
-
-    //Makes menu item visible for users to add new To Do Items
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.todo_menu, menu);
-
-        Drawable icon = menu.getItem(0).getIcon();
-        icon.mutate();
-
-        if(Build.VERSION.SDK_INT >= M) {
-            icon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
-        }
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    //Opens dialogue box for users to enter new To Do item
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch(item.getItemId()) {
-            case R.id.action_add_item:
-                final EditText itemEditText = new EditText(this);
-                AlertDialog dialog = new AlertDialog.Builder(this)
-                        .setTitle("Add New Item")
-                        .setMessage("What's next?")
-                        .setView(itemEditText)
-                        .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String item = String.valueOf(itemEditText.getText());
-                                dbHelper.insertNewItem(item);
-                                showItemList();
-                            }
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .create();
-                dialog.show();
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    //Function that deletes To Do item from the database
-    public void deleteItem(View view) {
-        View parent  = (View) view.getParent();
-        TextView itemTextView = (TextView) findViewById(R.id.itemName);
-        String item = String.valueOf(itemTextView.getText());
-        dbHelper.deleteItem(item);
+        updateUI();
     }
 
     public void addNewToDoItem(View view) {
@@ -110,13 +51,50 @@ public class ToDoMain extends AppCompatActivity {
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String item = String.valueOf(itemEditText.getText());
-                        dbHelper.insertNewItem(item);
-                        showItemList();
+                        String task = String.valueOf(itemEditText.getText());
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
+                        ContentValues values = new ContentValues();
+                        values.put(ToDoContract.TaskEntry.COL_TASK_TITLE, task);
+                        db.insertWithOnConflict(ToDoContract.TaskEntry.TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                        db.close();
+                        updateUI();
                     }
                 })
                 .setNegativeButton("Cancel", null)
                 .create();
         dialog.show();
+    }
+
+    public void deleteItem(View view) {
+        View parent = (View) view.getParent();
+        TextView taskTextView = (TextView) parent.findViewById(R.id.itemName);
+        String task = String.valueOf(taskTextView.getText());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(ToDoContract.TaskEntry.TABLE, ToDoContract.TaskEntry.COL_TASK_TITLE + " = ?", new String[]{task});
+        db.close();
+        updateUI();
+    }
+
+    private void updateUI() {
+        ArrayList<String> taskList = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(ToDoContract.TaskEntry.TABLE,
+                new String[]{ToDoContract.TaskEntry._ID, ToDoContract.TaskEntry.COL_TASK_TITLE}, null, null, null, null, null);
+        while (cursor.moveToNext()) {
+            int i = cursor.getColumnIndex(ToDoContract.TaskEntry.COL_TASK_TITLE);
+            taskList.add(cursor.getString(i));
+        }
+
+        if (mAdapter == null) {
+            mAdapter = new ArrayAdapter<>(this, R.layout.todo_row, R.id.itemName, taskList);
+            listItems.setAdapter(mAdapter);
+        } else {
+            mAdapter.clear();
+            mAdapter.addAll(taskList);
+            mAdapter.notifyDataSetChanged();
+        }
+
+        cursor.close();
+        db.close();
     }
 }
